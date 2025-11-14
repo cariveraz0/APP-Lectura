@@ -1,4 +1,4 @@
-package com.example.lectura_app
+package hn.edu.unah.lectura_ap
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lectura_app/src/views/libro_page.dart';
 import 'package:lectura_app/src/views/login_page.dart';
 
 void main() => runApp(const MyApp());
@@ -13,13 +14,17 @@ class MyApp extends StatelessWidget {
       routerConfig: GoRouter(
         //Esto es por mientras
         //La ruta inicial será la lista de libros si el usuario ya inició sesion, de lo contrario pasará al login
-        initialLocation: '/login',
+        initialLocation: '/libro',
         routes: [
           GoRoute(
             path: '/login', 
             name: 'login', 
             builder: (context, state) => LoginPage(),
-            routes: []
+          ),
+          GoRoute(
+            path: '/libro',
+            name: 'libro',
+            builder: (context, state) => LibroPage(),
           ),
         ]
       ),

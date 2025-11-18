@@ -12,8 +12,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: GoRouter(
-        //Esto es por mientras
-        //La ruta inicial será la lista de libros si el usuario ya inició sesion, de lo contrario pasará al login
+        //La ruta inicial será la de LibroPage()
+        //Si el usuario está autenticado pasará de un solo a LibroPage()
+        //De lo contrario, irá hacia LoginPage
         initialLocation: '/libro',
         routes: [
           GoRoute(

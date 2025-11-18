@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lectura_app/src/shared/utils.dart';
 import 'package:lectura_app/src/widgets/mytextfield.dart';
 
@@ -10,10 +11,10 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 89, 139, 77),
         title: const Center(
           child: Text(
-            'Inicio de sesion', style: TextStyle(fontSize: 30),
+            'Inicio de sesion', style: TextStyle(fontSize: 30, ),
           )
         ),
       ),
@@ -33,10 +34,10 @@ class LoginPage extends StatelessWidget {
                   pmargin: const EdgeInsets.all(15),
                   ppadding: const EdgeInsets.all(15),
                   radio: 20,
-                  color: Colors.black12,
+                  color: Color(0xFFDAD7CD),
                 ),
 
-                SizedBox(height: 30),
+                SizedBox(height: 20),
                 
                 MyTextfield(
                   obscuretext: true,
@@ -51,18 +52,16 @@ class LoginPage extends StatelessWidget {
                   pmargin: const EdgeInsets.all(15),
                   ppadding: const EdgeInsets.all(15),
                   radio: 20,
-                  color: Colors.black12,
+                  color: Color(0xFFDAD7CD),
                 ),
           
                 Center(
                   child: FilledButton(
                     style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(Colors.blue)
+                      backgroundColor: WidgetStateProperty.all(Color.fromARGB(255, 70, 96, 63))
                     ),
                     onPressed: ()async{
-                      if(correoController.text.isNotEmpty || contraseniaController.text.isNotEmpty)
-                      {
-                        Utils.showSnackBar(
+                      Utils.showSnackBar(
                           context: context,
                           title: "Debe iniciar sesion por Google",
                           color: Colors.red[300],
@@ -72,8 +71,7 @@ class LoginPage extends StatelessWidget {
                         await Future.delayed(const Duration(seconds: 2), () {
                         correoController.text = '';
                         contraseniaController.text = '';
-                      });
-                      }
+                        });
                     },
                     child: const Text(
                       'Iniciar Sesion', 
@@ -97,12 +95,15 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      Utils.showSnackBar(
-                          context: context,
-                          title: "Pendiente...",
-                          color: Colors.blue,
-                          duracion: const Duration(seconds: 2)
-                        );
+                      // Utils.showSnackBar(
+                      //     context: context,
+                      //     title: "Pendiente...",
+                      //     color: Colors.blue,
+                      //     duracion: const Duration(seconds: 2)
+                      // );
+
+                      //Momentaneo hasta implementar autenticacion por google
+                      context.replace('/libro');
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

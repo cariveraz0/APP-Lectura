@@ -27,18 +27,101 @@ class _LibroPageState extends State<LibroPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Color(0xFFA3B18A),
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: (){
-              context.go('/login');
-            },
-          ),
-        title: Text('Libro XYZ'),
+        // elevation: 0,
+        // centerTitle: true,
+        // backgroundColor: Color(0xFFA3B18A),
+        // leading: IconButton(
+        //     icon: Icon(Icons.arrow_back),
+        //     onPressed: (){
+        //       context.pushNamed('login');
+        //     },
+        //   ),
         
+        title: Text('Libro XYZ'),
+        actions: [
+          // IconButton(
+          //   onPressed: () async {
+          //     // await FirebaseAuth.instance.signOut(); // cierra la sesión
+
+          //     // if (!context.mounted) return;
+
+          //     context.replace('/login');
+          //   },
+          //   icon: Icon(Icons.exit_to_app),
+          // ),
+        ],
         ),
+        drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.red[50],
+                    radius: 40,
+                    // child: FirebaseAuth.instance.currentUser?.photoURL == null
+                    //     ? Text(
+                    //         'JA',
+                    //         style: TextStyle(
+                    //           fontSize: 42,
+                    //           color: Colors.red[400],
+                    //         ),
+                    //       )
+                    //     : ClipRRect(
+                    //         borderRadius: BorderRadius.circular(50),
+                            
+                    //       ),
+
+                    //Momentaneo hasta implementar autenticacion por google
+                    child: Text(
+                      'U',
+                      style: TextStyle(
+                        fontSize: 42,
+                        color: Color(0xFFA3B18A),
+                      ),
+                    ),
+                  ),
+                  Text('Usuario'),
+                ],
+              ),
+            ),
+
+            ListTile(
+              title: Text('Inicio'),
+              leading: Icon(Icons.home), 
+            ),
+
+            ListTile(
+              title: Text('Agregar libro'),
+              leading: Icon(Icons.book),
+            ),
+
+            ListTile(
+              title: Text('Reseñas'),
+              leading: Icon(Icons.comment), 
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Cuenta'),
+            ),
+
+            Divider(),
+
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Cerrar sesión'),
+              onTap: () {
+                //Momentaneo hasta implementar autenticacion por google
+                context.replace('/login');
+              },
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

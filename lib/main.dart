@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         redirect: (context, state) {
           final user = FirebaseAuth.instance.currentUser;
 
-          final freeRoutes = ['/libro'];
+          final freeRoutes = ['/login']; //Aqui se colocan las rutas "libres" que no necesitan el inicio
 
           if (user == null && !freeRoutes.contains(state.fullPath)){
             return '/login';
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         //La ruta inicial será la de LibroPage()
         //Si el usuario está autenticado pasará de un solo a LibroPage()
         //De lo contrario, irá hacia LoginPage
-        initialLocation: '/login',
+        initialLocation: '/libro',
         routes: [
           GoRoute(
             path: '/login', 

@@ -34,7 +34,8 @@ class _LoginPageState extends State<LoginPage> {
       
       return await FirebaseAuth.instance.signInWithCredential(credential);
 
-    } catch (e) {
+    } 
+    catch (e) {
       print('Error en Goggle Sign-In $e');
       return null;
     }
@@ -109,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   onPressed: () async {
-                    _handleLogin();
+                    //_handleLogin();
                     Utils.showSnackBar(
                       context: context,
                       title: "Debe iniciar sesion por Google",
@@ -143,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () async {
                     Utils.showSnackBar(
                       context: context,
-                      title: "Iniciando sesión...",
+                      title: "Iniciando sesión con Google...",
                       color: Colors.blue,
                       duracion: const Duration(seconds: 2),
                     );
@@ -155,6 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                         Utils.showSnackBar(
                           context: context,
                           title: 'Bienvenido',
+                          color: Colors.green,
                           duracion: Duration(seconds: 2),
                         );
                         context.replace('/libro');

@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lectura_app/src/shared/utils.dart';
 import 'package:lectura_app/src/widgets/custom_button.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -27,29 +29,8 @@ class _LibroPageState extends State<LibroPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // elevation: 0,
-        // centerTitle: true,
-        // backgroundColor: Color(0xFFA3B18A),
-        // leading: IconButton(
-        //     icon: Icon(Icons.arrow_back),
-        //     onPressed: (){
-        //       context.pushNamed('login');
-        //     },
-        //   ),
-        
         title: Text('Libro XYZ'),
-        actions: [
-          // IconButton(
-          //   onPressed: () async {
-          //     // await FirebaseAuth.instance.signOut(); // cierra la sesión
-
-          //     // if (!context.mounted) return;
-
-          //     context.replace('/login');
-          //   },
-          //   icon: Icon(Icons.exit_to_app),
-          // ),
-        ],
+        actions: [],
         ),
         drawer: Drawer(
         child: ListView(
@@ -62,29 +43,22 @@ class _LibroPageState extends State<LibroPage> {
                   CircleAvatar(
                     backgroundColor: Colors.red[50],
                     radius: 40,
-                    // child: FirebaseAuth.instance.currentUser?.photoURL == null
-                    //     ? Text(
-                    //         'JA',
-                    //         style: TextStyle(
-                    //           fontSize: 42,
-                    //           color: Colors.red[400],
-                    //         ),
-                    //       )
-                    //     : ClipRRect(
-                    //         borderRadius: BorderRadius.circular(50),
-                            
-                    //       ),
-
-                    //Momentaneo hasta implementar autenticacion por google
-                    child: Text(
-                      'U',
-                      style: TextStyle(
-                        fontSize: 42,
-                        color: Color(0xFFA3B18A),
-                      ),
-                    ),
+                    child: FirebaseAuth.instance.currentUser?.photoURL == null
+                        ? Text(
+                            '${FirebaseAuth.instance.currentUser?.displayName?.substring(0)}',
+                            style: TextStyle(
+                              fontSize: 42,
+                              color: Colors.red[400],
+                            ),
+                          )
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: Image.network(
+                              FirebaseAuth.instance.currentUser!.photoURL!,
+                            ),
+                          ),
                   ),
-                  Text('Usuario'),
+                  Text('${FirebaseAuth.instance.currentUser?.displayName}'),
                 ],
               ),
             ),
@@ -114,9 +88,20 @@ class _LibroPageState extends State<LibroPage> {
             ListTile(
               leading: Icon(Icons.exit_to_app),
               title: Text('Cerrar sesión'),
-              onTap: () {
-                //Momentaneo hasta implementar autenticacion por google
-                context.replace('/login');
+              onTap: () async {
+                Utils.showSnackBar(
+                  context: context,
+                  title: "Sesion cerrada",
+                  color: Colors.red[300],
+                  duracion: const Duration(seconds: 3),
+                );
+
+                await Future.delayed(const Duration(seconds: 2), () {
+                  FirebaseAuth.instance.signOut(); // cierra la sesión
+                  if (!context.mounted) return;
+                  context.replace('/login');
+                });
+                
               },
             ),
           ],
@@ -210,9 +195,7 @@ class _LibroPageState extends State<LibroPage> {
             ),
           ],
         )
-
-          ),
-        );
-  }
-  
+      ),
+    );
+  } 
 }

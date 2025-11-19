@@ -1,0 +1,114 @@
+{
+  "project_info": {
+    "project_number": "880906643702",
+    "project_id": "app-lectura-7f4af",
+    "storage_bucket": "app-lectura-7f4af.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:880906643702:android:6fc73ac782de0d81b5a4d7",
+        "android_client_info": {
+          "package_name": "com.app_lectura"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "880906643702-lrv53jrhfld582ufdio9h6obk155vr47.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app_lectura",
+            "certificate_hash": "c8420df21282208d2e8a4213e77f14d09561ddfd"
+          }
+        },
+        {
+          "client_id": "880906643702-qvvguf24ul89hniamn4eg9n6drs2jaql.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app_lectura",
+            "certificate_hash": "9d28f536647c1ca3bba8c9c1814c5a580e2a5866"
+          }
+        },
+        {
+          "client_id": "880906643702-tf70vk0sjekhufoon538p2ep6e8c93mk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaMF5xWbvclSbCy5nJ0GHBfcVfOOTezQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "880906643702-tf70vk0sjekhufoon538p2ep6e8c93mk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "880906643702-qprvu5rjre5kanb35p3g3970ra16u282.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.lecturaApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:880906643702:android:ea542503dda67111b5a4d7",
+        "android_client_info": {
+          "package_name": "hn.edu.unah.lectura_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "880906643702-2hhmcpnsqtbveu0gcrblv34gu5f67g24.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hn.edu.unah.lectura_app",
+            "certificate_hash": "9d28f536647c1ca3bba8c9c1814c5a580e2a5866"
+          }
+        },
+        {
+          "client_id": "880906643702-cp20cg3lhbgj1k3080ptd3fee2ehsmms.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hn.edu.unah.lectura_app",
+            "certificate_hash": "c8420df21282208d2e8a4213e77f14d09561ddfd"
+          }
+        },
+        {
+          "client_id": "880906643702-tf70vk0sjekhufoon538p2ep6e8c93mk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaMF5xWbvclSbCy5nJ0GHBfcVfOOTezQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "880906643702-tf70vk0sjekhufoon538p2ep6e8c93mk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "880906643702-qprvu5rjre5kanb35p3g3970ra16u282.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.lecturaApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

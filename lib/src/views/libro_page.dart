@@ -1,201 +1,193 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:lectura_app/src/shared/utils.dart';
 import 'package:lectura_app/src/widgets/custom_button.dart';
-import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'package:lectura_app/src/widgets/custom_drawer.dart';
+import 'package:lectura_app/src/widgets/custom_timer.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-
 class LibroPage extends StatefulWidget {
-  const LibroPage({super.key});
+  final String libroid;
+
+  const LibroPage({super.key, required this.libroid});
 
   @override
   State<LibroPage> createState() => _LibroPageState();
+  
 }
 
 class _LibroPageState extends State<LibroPage> {
-  final StopWatchTimer _stopWatchTimer = StopWatchTimer(
-    mode: StopWatchMode.countUp,
-  );
+  final TextEditingController pageController = TextEditingController();
 
-  @override
-  void dispose(){
-    _stopWatchTimer.dispose();
-    super.dispose();
+  Future <void> actualizarPaginas(int nuevaPagina) async {
+    final ref = FirebaseFirestore.instance.collection('libros').doc(widget.libroid);
+
+    await ref.update({
+      'paginasLeidas': nuevaPagina
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Libro XYZ'),
-        actions: [],
-        ),
-        drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.red[50],
-                    radius: 40,
-                    child: FirebaseAuth.instance.currentUser?.photoURL == null
-                        ? Text(
-                            '${FirebaseAuth.instance.currentUser?.displayName?.substring(0)}',
-                            style: TextStyle(
-                              fontSize: 42,
-                              color: Colors.red[400],
-                            ),
-                          )
-                        : ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: Image.network(
-                              FirebaseAuth.instance.currentUser!.photoURL!,
-                            ),
-                          ),
-                  ),
-                  Text('${FirebaseAuth.instance.currentUser?.displayName}'),
-                ],
-              ),
-            ),
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('libros')
+          .doc(widget.libroid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const Scaffold(
+            body: Center(child: Text('Libro no encontrado')),
+          );
+        }
 
-            ListTile(
-              title: Text('Inicio'),
-              leading: Icon(Icons.home), 
-            ),
+        final data = snapshot.data!.data() as Map<String, dynamic>;
+        final titulo = data['titulo'];
+        final autor = data['autor'];
+        final portada = data['imagenPortada'];
+        final paginasLeidas = data['paginasLeidas'];
+        final paginasTotales = data['paginasTotales'];
 
-            ListTile(
-              title: Text('Agregar libro'),
-              leading: Icon(Icons.book),
-            ),
+        final progreso = paginasLeidas / paginasTotales;
 
-            ListTile(
-              title: Text('Reseñas'),
-              leading: Icon(Icons.comment), 
-            ),
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            title: Text('titulo', 
+            style: TextStyle(fontWeight: FontWeight.bold),),
+            centerTitle: true,
+          ),
 
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Cuenta'),
-            ),
+          drawer: const CustomDrawer(),
 
-            Divider(),
-
-            ListTile(
-              leading: Icon(Icons.exit_to_app),
-              title: Text('Cerrar sesión'),
-              onTap: () async {
-                Utils.showSnackBar(
-                  context: context,
-                  title: "Sesion cerrada",
-                  color: Colors.red[300],
-                  duracion: const Duration(seconds: 3),
-                );
-
-                await Future.delayed(const Duration(seconds: 2), () {
-                  FirebaseAuth.instance.signOut(); // cierra la sesión
-                  if (!context.mounted) return;
-                  context.replace('/login');
-                });
-                
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(height: 280),
-            StreamBuilder<int>(
-              stream: _stopWatchTimer.rawTime,
-              initialData: 0,
-              builder: (context, snapshot){
-                final time = snapshot.data!;
-                final display = StopWatchTimer.getDisplayTime(
-                  time, milliSecond: false,
-                );
-                return Text(
-                  display,
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-                );
-              }
-            ),
-
-            SizedBox(height: 5),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CustomButton(
-                  text: "Comenzar", 
-                  onPressed: (){
-                    _stopWatchTimer.onStartTimer();
-                  }
+                const SizedBox(height: 20),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(portada, height: 200),
                 ),
+                const SizedBox(height: 20),
+                Text(
+                  autor,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontFamily: "StackSansHeadline",
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Páginas: $paginasLeidas / $paginasTotales',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontFamily: "StackSansHeadline",
+                    fontWeight: FontWeight.w100,
+                  ),
+                ),
+                const SizedBox(height: 15),
+
+                const CustomTimer(),
+
+                const SizedBox(height: 20),
+
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text('Última página leida:',
+                      //textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: "StackSansHeadline",
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                    SizedBox(
+                      width: 169,
+                      height: 45,
+                      child: TextField(
+                        controller: pageController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: 'Ingrese la página',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+
+                const SizedBox(height: 20),
                 CustomButton(
-                  text: "Detener", 
-                  onPressed: (){
-                    _stopWatchTimer.onStopTimer();
-                  }
+                  text: "Guardar",
+                  onPressed: () async {
+                    if (pageController.text.isEmpty){
+                      return;
+                    }
+                    final nuevaPagina = int.tryParse(pageController.text);
+
+                    if (nuevaPagina == null){
+                      return;
+                    }
+
+                    if (nuevaPagina > paginasTotales){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('No se puede ingresar más páginas que el total del libro.'),
+                        )
+                      );
+                      return;
+                    }
+                    await actualizarPaginas(nuevaPagina);
+
+                    pageController.clear();
+                  },
                 ),
               ],
             ),
-            
-            SizedBox(height: 10),
-
-            CustomButton(
-              text: "Reiniciar", 
-              onPressed: (){
-               _stopWatchTimer.onResetTimer();
-              }
+          ),
+          bottomNavigationBar: Container(
+            height: 50,
+            color: const Color(0xFFA3B18A),
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                LinearPercentIndicator(
+                  width: 200,
+                  lineHeight: 20,
+                  percent: progreso,
+                  backgroundColor: const Color(0xFFDAD7CD),
+                  progressColor: const Color(0xFF3A5A40),
+                  barRadius: const Radius.circular(10),
+                  animation: true,
+                  animationDuration: 800,
+                  center: Text(
+                    "${(progreso * 100).toInt()}%",
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.black,
+                      fontFamily: "StackSansHeadline",
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              ],
             ),
-
-            SizedBox(height: 80),
-
-            CustomButton(
-              text: "Guardar", 
-              onPressed: (){
-               
-              }
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        height: 50,
-        color: Color(0xFFA3B18A),
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            LinearPercentIndicator(
-              width: 200,
-              lineHeight: 20,
-              percent: 0.1,
-              backgroundColor: Color(0xFFDAD7CD),
-              progressColor: Color(0xFF3A5A40),
-              barRadius: Radius.circular(10),
-              animation: true,
-              animationDuration: 800,
-              center: Text(
-                "${(0.1 * 100).toInt()}%",
-                style: TextStyle(
-                  fontSize: 12, 
-                  color: Colors.black, 
-                  fontFamily: "StackSansHeadline",
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic),
-              ),
-            ),
-          ],
-        )
-      ),
+          ),
+        );
+      },
     );
-  } 
+  }
 }
+
+

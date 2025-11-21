@@ -43,7 +43,10 @@ class MyApp extends StatelessWidget {
           GoRoute(
             path: '/libro',
             name: 'libro',
-            builder: (context, state) => LibroPage(),
+            builder: (context, state){
+              final libroId = state.extra as String? ?? 'd4HdWJAySYLWOiUJV1br';
+              return LibroPage(libroid: libroId);
+            },
           ),
         ]
       ),

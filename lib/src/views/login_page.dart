@@ -36,7 +36,6 @@ class _LoginPageState extends State<LoginPage> {
 
     } 
     catch (e) {
-      print('Error en Goggle Sign-In $e');
       return null;
     }
   }

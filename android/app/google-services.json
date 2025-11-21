@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "880906643702-md44pp07edc99b9c2urj3c2089n96qde.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app_lectura",
+            "certificate_hash": "4a802a4f98bcda61862cfe4fbde76d3894010bee"
+          }
+        },
+        {
           "client_id": "880906643702-qvvguf24ul89hniamn4eg9n6drs2jaql.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -71,6 +79,14 @@
           "android_info": {
             "package_name": "hn.edu.unah.lectura_app",
             "certificate_hash": "9d28f536647c1ca3bba8c9c1814c5a580e2a5866"
+          }
+        },
+        {
+          "client_id": "880906643702-4r98q0a44ad0lnqf1geodiiokbeabus2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hn.edu.unah.lectura_app",
+            "certificate_hash": "4a802a4f98bcda61862cfe4fbde76d3894010bee"
           }
         },
         {

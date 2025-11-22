@@ -6,7 +6,7 @@ class LibroProvider {
   Stream<List<Libro>> getLibrosStream() {
     return FirebaseFirestore.instance
       .collection('libros')
-      //.where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+      .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots()
       .map((snapshot) {
         return snapshot.docs.map((doc) {

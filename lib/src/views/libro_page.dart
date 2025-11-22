@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lectura_app/src/shared/utils.dart';
 import 'package:lectura_app/src/widgets/custom_button.dart';
 import 'package:lectura_app/src/widgets/custom_timer.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -22,23 +24,37 @@ class _LibroPageState extends State<LibroPage> {
         .doc(widget.libroid);
 
     String nuevoEstado = "Pendiente";
+    
+    if (nuevaPagina > 0){
+      nuevoEstado = "En Progreso";
+    }
+
     if (nuevaPagina == paginasTotales) {
       nuevoEstado = "Finalizado";
     }
 
-    if (nuevaPagina > 0){
-      nuevoEstado = "En Progreso";
-    }
 
     await ref.update({
       'paginasLeidas': nuevaPagina,
       'estado': nuevoEstado,
     });
+
+    FocusScope.of(context).unfocus();
+    Utils.showSnackBar(
+      context: context,
+      title: "Progreso actualizado",
+      duracion: Duration(seconds: 2),
+      color: Colors.green
+    );
+
+    await Future.delayed(const Duration(seconds: 2), () {
+      context.replace('/home');
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print('Estas en LibroPage()');
+    //print('Estas en LibroPage()');
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection('libros')
@@ -147,22 +163,17 @@ class _LibroPageState extends State<LibroPage> {
                     }
 
                     if (nuevaPagina > paginasTotales) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'No se puede ingresar más páginas que el total del libro.',
-                          ),
-                        ),
+                      Utils.showSnackBar(
+                        context: context,
+                        title: "No se puede ingresar más páginas que el total del libro",
+                        duracion: Duration(seconds: 2),
+                        color: Colors.red
                       );
                       return;
                     }
                     await actualizarPaginas(nuevaPagina, paginasTotales);
 
                     pageController.clear();
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Progreso Actualizado')),
-                    );
                   },
                 ),
               ],

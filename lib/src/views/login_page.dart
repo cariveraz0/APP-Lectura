@@ -16,7 +16,6 @@ class _LoginPageState extends State<LoginPage> {
   final correoController = TextEditingController();
   final contraseniaController = TextEditingController();
 
-  //bool _isLoading = false;
   bool obscurePassword = true;
 
   Future<UserCredential?> _handleGoogleSignIn() async {
@@ -39,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('Estas en LoginPage()');
+    //print('Estas en LoginPage()');
     return Scaffold(
       body: Container(
         width: double.infinity,

@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lectura_app/src/models/datos_libros.dart';
 import 'package:lectura_app/src/providers/libro_provider.dart';
 import 'package:lectura_app/src/widgets/custom_drawer.dart';
@@ -19,7 +17,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print('Estas en HomePage()');
+    //print('Estas en HomePage()');
     return Scaffold(
       appBar: AppBar(
         title: Center(

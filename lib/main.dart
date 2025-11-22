@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectura_app/firebase_options.dart';
+import 'package:lectura_app/src/views/home_page.dart';
 import 'package:lectura_app/src/views/libro_page.dart';
 import 'package:lectura_app/src/views/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,17 +24,20 @@ class MyApp extends StatelessWidget {
         redirect: (context, state) {
           final user = FirebaseAuth.instance.currentUser;
 
-          final freeRoutes = ['/login']; //Aqui se colocan las rutas "libres" que no necesitan el inicio
+          final freeRoutes = ['/']; //Aqui se colocan las rutas "libres" que no necesitan el inicio
 
           if (user == null && !freeRoutes.contains(state.fullPath)){
             return '/login';
           }
-          return null;
+          else
+          {
+            return null;
+          }
         },
         //La ruta inicial será la de LibroPage()
         //Si el usuario está autenticado pasará de un solo a LibroPage()
         //De lo contrario, irá hacia LoginPage
-        initialLocation: '/libro',
+        initialLocation: '/home',
         routes: [
           GoRoute(
             path: '/login', 
@@ -41,13 +45,28 @@ class MyApp extends StatelessWidget {
             builder: (context, state) => LoginPage(),
           ),
           GoRoute(
-            path: '/libro',
-            name: 'libro',
-            builder: (context, state){
-              final libroId = state.extra as String? ?? 'd4HdWJAySYLWOiUJV1br';
-              return LibroPage(libroid: libroId);
-            },
+            path: '/home',
+            name: 'home',
+            builder: (context, state) => HomePage(),
+            routes: [
+              
+            ]
           ),
+          GoRoute(
+                path: '/libro',
+                name: 'libro',
+                builder: (context, state){
+                  if(state.extra == null) 
+                  {
+                    return HomePage();
+                  }
+                  else
+                  {
+                    final libroId = state.extra as String;
+                    return LibroPage(libroid: libroId);
+                  }
+                },
+              ),
         ]
       ),
       debugShowCheckedModeBanner: false,

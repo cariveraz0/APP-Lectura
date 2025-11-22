@@ -28,6 +28,7 @@ class _LibroPageState extends State<LibroPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('Estas en LibroPage()');
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection('libros')
@@ -57,12 +58,10 @@ class _LibroPageState extends State<LibroPage> {
         return Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            title: Text('titulo', 
+            title: Text(titulo, 
             style: TextStyle(fontWeight: FontWeight.bold),),
             centerTitle: true,
           ),
-
-          drawer: const CustomDrawer(),
 
           body: Center(
             child: Column(
@@ -71,7 +70,7 @@ class _LibroPageState extends State<LibroPage> {
                 const SizedBox(height: 20),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(portada, height: 200),
+                  child: Image.network(portada, height: 100),
                 ),
                 const SizedBox(height: 20),
                 Text(

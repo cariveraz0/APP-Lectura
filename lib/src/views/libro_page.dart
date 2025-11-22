@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lectura_app/src/widgets/custom_button.dart';
-import 'package:lectura_app/src/widgets/custom_drawer.dart';
 import 'package:lectura_app/src/widgets/custom_timer.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -12,17 +11,28 @@ class LibroPage extends StatefulWidget {
 
   @override
   State<LibroPage> createState() => _LibroPageState();
-  
 }
 
 class _LibroPageState extends State<LibroPage> {
   final TextEditingController pageController = TextEditingController();
 
-  Future <void> actualizarPaginas(int nuevaPagina) async {
-    final ref = FirebaseFirestore.instance.collection('libros').doc(widget.libroid);
+  Future<void> actualizarPaginas(int nuevaPagina, int paginasTotales) async {
+    final ref = FirebaseFirestore.instance
+        .collection('libros')
+        .doc(widget.libroid);
+
+    String nuevoEstado = "Pendiente";
+    if (nuevaPagina == paginasTotales) {
+      nuevoEstado = "Finalizado";
+    }
+
+    if (nuevaPagina > 0){
+      nuevoEstado = "En Progreso";
+    }
 
     await ref.update({
-      'paginasLeidas': nuevaPagina
+      'paginasLeidas': nuevaPagina,
+      'estado': nuevoEstado,
     });
   }
 
@@ -58,8 +68,7 @@ class _LibroPageState extends State<LibroPage> {
         return Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            title: Text(titulo, 
-            style: TextStyle(fontWeight: FontWeight.bold),),
+            title: Text(titulo, style: TextStyle(fontWeight: FontWeight.bold)),
             centerTitle: true,
           ),
 
@@ -95,16 +104,16 @@ class _LibroPageState extends State<LibroPage> {
 
                 const SizedBox(height: 20),
 
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text('Última página leida:',
+                    Text(
+                      'Última página leida:',
                       //textAlign: TextAlign.left,
                       style: TextStyle(
                         fontSize: 15,
                         fontFamily: "StackSansHeadline",
-                        fontWeight: FontWeight.bold
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(
@@ -120,7 +129,7 @@ class _LibroPageState extends State<LibroPage> {
                           ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
 
@@ -128,26 +137,32 @@ class _LibroPageState extends State<LibroPage> {
                 CustomButton(
                   text: "Guardar",
                   onPressed: () async {
-                    if (pageController.text.isEmpty){
+                    if (pageController.text.isEmpty) {
                       return;
                     }
                     final nuevaPagina = int.tryParse(pageController.text);
 
-                    if (nuevaPagina == null){
+                    if (nuevaPagina == null) {
                       return;
                     }
 
-                    if (nuevaPagina > paginasTotales){
+                    if (nuevaPagina > paginasTotales) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('No se puede ingresar más páginas que el total del libro.'),
-                        )
+                          content: Text(
+                            'No se puede ingresar más páginas que el total del libro.',
+                          ),
+                        ),
                       );
                       return;
                     }
-                    await actualizarPaginas(nuevaPagina);
+                    await actualizarPaginas(nuevaPagina, paginasTotales);
 
                     pageController.clear();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Progreso Actualizado')),
+                    );
                   },
                 ),
               ],
@@ -188,5 +203,3 @@ class _LibroPageState extends State<LibroPage> {
     );
   }
 }
-
-

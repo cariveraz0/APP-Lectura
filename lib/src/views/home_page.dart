@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectura_app/src/models/datos_libros.dart';
 import 'package:lectura_app/src/providers/libro_provider.dart';
+import 'package:lectura_app/src/shared/utils.dart';
 import 'package:lectura_app/src/widgets/custom_drawer.dart';
 import 'package:lectura_app/src/widgets/custom_listtile.dart';
+import 'package:lectura_app/src/widgets/custom_progressbar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,12 +17,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final libroprovider = LibroProvider();
+  final String? nombre = FirebaseAuth.instance.currentUser?.displayName;
+  
+  int librosTotales = 40;
+  int librosLeidos = 20;
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: Center(
-          child: Text('Libros')
+          child: nombre == null ? Text('Libros') : Text('Libros de $nombre'),
         ),
         backgroundColor: Color.fromARGB(255, 153, 165, 153),
       ),
@@ -41,8 +49,12 @@ class _HomePageState extends State<HomePage> {
           return ListView.builder(
             itemCount: libros.length,
             itemBuilder: (BuildContext context, int index) {
+              librosTotales = libros.length;
               final libro = libros[index];
-              
+              if(libro.estado == 'Finalizado')
+              {
+                librosLeidos++;
+              }
               return CustomListTile(
                 fotoPortada: libro.imagenPortada.isNotEmpty
                   ? Image.network(libro.imagenPortada, width: 50, height: 50, fit: BoxFit.cover)
@@ -56,6 +68,7 @@ class _HomePageState extends State<HomePage> {
                 direccion: 'libro',
                 id: libro.id,
               );
+              
             },
           );
         }
@@ -64,9 +77,23 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Color(0xFF588157),	
         child: Icon(Icons.add, color: Colors.white),
         onPressed: (){
-          context.push('/add');
+          if(librosTotales >= 12)
+          {
+            Utils.showSnackBar(
+              context: context,
+              title: "Solo se puede agregar un maximo de 12 libros",
+              duracion: Duration(seconds: 3),
+              color: Colors.red
+            );
+          }
+          else
+          {
+            context.push('/add');
+          }
         },
       ),
+      // bottomNavigationBar: CustomProgressbar(leido: librosLeidos, total: librosTotales),
+      bottomNavigationBar: Text('Leidos $librosLeidos, Totales $librosTotales') //Esto solo es para ver los valores que tienen almacenados
     );
   }
 }

@@ -32,7 +32,6 @@ class CustomListTile extends StatelessWidget {
       leading: fotoPortada,
       title: Text(libroTitulo),
       subtitle: Text("$autor • $estado"),
-
       trailing: Text("$paginasLeidas/$paginasTotales"),
       onTap: (){
         print(id);

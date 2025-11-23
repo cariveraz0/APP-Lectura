@@ -54,7 +54,6 @@ class _LibroPageState extends State<LibroPage> {
 
   @override
   Widget build(BuildContext context) {
-    //print('Estas en LibroPage()');
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection('libros')

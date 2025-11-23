@@ -14,7 +14,7 @@ class MyTextfield extends StatefulWidget{
     required this.pmargin,
     required this.ppadding,
     required this.radio,
-    required this.color
+    required this.colorfondo
     });
 
   final TextInputType type;
@@ -27,7 +27,7 @@ class MyTextfield extends StatefulWidget{
   final EdgeInsetsGeometry pmargin;
   final EdgeInsetsGeometry ppadding;
   final double radio;
-  final Color color;
+  final Color colorfondo;
           
 
   @override
@@ -49,7 +49,7 @@ class _MyTextfieldState extends State<MyTextfield> {
       padding: widget.ppadding,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(widget.radio),
-        color: widget.color
+        color: widget.colorfondo
       ),
       child: Column(
         children: [

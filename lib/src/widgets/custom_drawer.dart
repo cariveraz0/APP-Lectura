@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lectura_app/src/shared/utils.dart';
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key});
+  CustomDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,28 +33,22 @@ class CustomDrawer extends StatelessWidget {
                         ),
                 ),
                 Text('${FirebaseAuth.instance.currentUser?.displayName}'),
+                
               ],
             ),
           ),
 
-          const ListTile(
+          ListTile(
             title: Text('Inicio'),
             leading: Icon(Icons.home),
           ),
 
-          const ListTile(
+          ListTile(
             title: Text('Agregar libro'),
             leading: Icon(Icons.book),
-          ),
-
-          const ListTile(
-            title: Text('Reseñas'),
-            leading: Icon(Icons.comment),
-          ),
-
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text('Cuenta'),
+            onTap: (){
+              context.push('/add');
+            },
           ),
 
           const Divider(),
@@ -68,8 +62,8 @@ class CustomDrawer extends StatelessWidget {
                 title: "Sesión cerrada",
                 color: Colors.red[300],
                 duracion: const Duration(seconds: 3),
+                
               );
-
               await Future.delayed(const Duration(seconds: 2), () {
                 FirebaseAuth.instance.signOut();
                 if (!context.mounted) return;

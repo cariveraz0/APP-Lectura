@@ -38,10 +38,10 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
 
-          ListTile(
-            title: Text('Inicio'),
-            leading: Icon(Icons.home),
-          ),
+          // ListTile(
+          //   title: Text('Inicio'),
+          //   leading: Icon(Icons.home),
+          // ),
 
           ListTile(
             title: Text('Agregar libro'),

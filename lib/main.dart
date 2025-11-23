@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectura_app/firebase_options.dart';
+import 'package:lectura_app/src/views/add_libro.dart';
 import 'package:lectura_app/src/views/home_page.dart';
 import 'package:lectura_app/src/views/libro_page.dart';
 import 'package:lectura_app/src/views/login_page.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
         redirect: (context, state) {
           final user = FirebaseAuth.instance.currentUser;
 
-          final freeRoutes = ['/']; //Aqui se colocan las rutas "libres" que no necesitan el inicio
+          final freeRoutes = ['/login']; //Aqui se colocan las rutas "libres" que no necesitan el inicio
 
           if (user == null && !freeRoutes.contains(state.fullPath)){
             return '/login';
@@ -34,8 +35,8 @@ class MyApp extends StatelessWidget {
             return null;
           }
         },
-        //La ruta inicial será la de LibroPage()
-        //Si el usuario está autenticado pasará de un solo a LibroPage()
+        //La ruta inicial será la de HomePage()
+        //Si el usuario está autenticado pasará de un solo a HomePage()
         //De lo contrario, irá hacia LoginPage
         initialLocation: '/home',
         routes: [
@@ -48,25 +49,27 @@ class MyApp extends StatelessWidget {
             path: '/home',
             name: 'home',
             builder: (context, state) => HomePage(),
-            routes: [
-              
-            ]
           ),
           GoRoute(
-                path: '/libro',
-                name: 'libro',
-                builder: (context, state){
-                  if(state.extra == null) 
-                  {
-                    return HomePage();
-                  }
-                  else
-                  {
-                    final libroId = state.extra as String;
-                    return LibroPage(libroid: libroId);
-                  }
-                },
-              ),
+            path: '/libro',
+            name: 'libro',
+            builder: (context, state){
+              if(state.extra == null) 
+              {
+                return HomePage();
+              }
+              else
+              {
+                final libroId = state.extra as String;
+                return LibroPage(libroid: libroId);
+              }
+            },
+          ),
+          GoRoute(
+            path: '/add',
+            name: 'add',
+            builder: (context, state) => AddLibro(),
+          ),
         ]
       ),
       debugShowCheckedModeBanner: false,

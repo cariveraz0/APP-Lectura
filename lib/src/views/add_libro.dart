@@ -1,205 +1,149 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lectura_app/src/providers/libro_provider.dart';
+import 'package:lectura_app/src/shared/utils.dart';
+import 'package:lectura_app/src/widgets/mytextfield.dart';
 
-class AddBookScreen extends StatefulWidget {
-  @override
-  State<AddBookScreen> createState() => _AddBookScreenState();
-}
-
-class _AddBookScreenState extends State<AddBookScreen> {
-  final _formKey = GlobalKey<FormState>();
-
-  TextEditingController titleController = TextEditingController();
-  TextEditingController authorController = TextEditingController();
-  TextEditingController totalPagesController = TextEditingController();
-  TextEditingController readPagesController = TextEditingController();
-
-  String status = "Pendiente";
-  File? coverImage;
-
-  // --- Seleccionar imagen desde galería ---
-  Future<dynamic> pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? picked = await picker.pickImage(source: ImageSource.gallery);
-
-    if (picked != null) {
-      setState(() {
-        coverImage = File(picked.path);
-      });
-    }
-  }
-
-  // --- Subir imagen a Firebase Storage ---
-  Future<String?> uploadImage(String userId, String bookId) async {
-    if (coverImage == null) return null;
-
-    final storageRef = FirebaseStorage.instance
-        .ref()
-        .child('users/$userId/books/$bookId/cover.jpg');
-
-    await storageRef.putFile(coverImage!);
-
-    return await storageRef.getDownloadURL();
-  }
-
-  // --- Guardar libro en Firestore ---
-  Future<void> saveBook() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    try {
-      final User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) return;
-
-      String userId = user.uid;
-      String bookId = FirebaseFirestore.instance.collection('tmp').doc().id;
-
-      String? imageUrl = await uploadImage(userId, bookId);
-
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(userId)
-          .collection("books")
-          .doc(bookId)
-          .set({
-        "title": titleController.text,
-        "author": authorController.text,
-        "status": status,
-        "totalPages": int.parse(totalPagesController.text),
-        "readPages": int.parse(readPagesController.text),
-        "coverUrl": imageUrl,
-        "createdAt": DateTime.now(),
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("✅ Libro agregado correctamente")),
-      );
-
-      Navigator.pop(context);
-
-    } catch (e) {
-      print("Error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error al guardar el libro")),
-      );
-    }
-  }
-
+class AddLibro extends StatelessWidget {
+  AddLibro({super.key});
+  final nombreLibro = TextEditingController();
+  final nombreAutor = TextEditingController();
+  final paginasTotales = TextEditingController();
+  final libroprovider = LibroProvider();
+  
   @override
   Widget build(BuildContext context) {
+    String? direccionimagen;
     return Scaffold(
-      appBar: AppBar(title: Text("Agregar Libro")),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              // ---------- IMAGEN DE PORTADA ----------
-              GestureDetector(
-                onTap: pickImage,
-                child: coverImage == null
-                    ? Container(
-                        height: 170,
-                        width: 130,
-                        color: Colors.grey[300],
-                        child: Icon(Icons.add_photo_alternate, size: 40),
-                      )
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.file(
-                          coverImage!,
-                          height: 170,
-                          width: 130,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-              ),
-
-              SizedBox(height: 25),
-
-              // ---------- TÍTULO ----------
-              TextFormField(
-                controller: titleController,
-                decoration: InputDecoration(labelText: "Título"),
-                validator: (v) =>
-                    v!.isEmpty ? "Ingrese un título" : null,
-              ),
-
-              SizedBox(height: 15),
-
-              // ---------- AUTOR ----------
-              TextFormField(
-                controller: authorController,
-                decoration: InputDecoration(labelText: "Autor"),
-                validator: (v) =>
-                    v!.isEmpty ? "Ingrese el autor" : null,
-              ),
-
-              SizedBox(height: 15),
-
-              // ---------- ESTADO ----------
-              DropdownButtonFormField<String>(
-                value: status,
-                items: [
-                  "Pendiente",
-                  "En progreso",
-                  "Finalizado",
-                ].map((s) =>
-                    DropdownMenuItem(value: s, child: Text(s))).toList(),
-                onChanged: (value) {
-                  setState(() => status = value!);
-                },
-                decoration: InputDecoration(labelText: "Estado"),
-              ),
-
-              SizedBox(height: 15),
-
-              // ---------- PÁGINAS TOTALES ----------
-              TextFormField(
-                controller: totalPagesController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: "Páginas totales"),
-                validator: (v) =>
-                    v!.isEmpty ? "Ingrese el número de páginas" : null,
-              ),
-
-              SizedBox(height: 15),
-
-              // ---------- PÁGINAS LEÍDAS ----------
-              TextFormField(
-                controller: readPagesController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: "Páginas leídas"),
-                validator: (v) =>
-                    v!.isEmpty ? "Ingrese las páginas leídas" : null,
-              ),
-
-              SizedBox(height: 30),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: saveBook,
-                  child: Text("Guardar Libro"),
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 153, 165, 153),
+        title: Center(child: const Text('Agregue un nuevo libro')),
+      ),
+      body: Center(
+        child: ListView.builder(
+          itemCount: 1,
+          itemBuilder: (BuildContext context, int index) {
+            return Column(
+              children: [
+                MyTextfield(
+                  type: TextInputType.text, 
+                  obscuretext: false, 
+                  texto: 'Nombre del libro', 
+                  tamaniotexto: 20, 
+                  pmargin: EdgeInsetsGeometry.all(10), 
+                  ppadding: EdgeInsetsGeometry.all(20), 
+                  radio: 20, 
+                  colorfondo: Color.fromARGB(255, 176, 190, 152),
+                  controller: nombreLibro,
+                  icono: Icon(Icons.book),
                 ),
-              ),
-            ],
-          ),
+                MyTextfield(
+                  type: TextInputType.text, 
+                  obscuretext: false, 
+                  texto: 'Nombre del Autor', 
+                  tamaniotexto: 20, 
+                  pmargin: EdgeInsetsGeometry.all(10), 
+                  ppadding: EdgeInsetsGeometry.all(20), 
+                  radio: 20, 
+                  colorfondo: Color.fromARGB(255, 176, 190, 152),
+                  controller: nombreAutor,
+                  icono: Icon(Icons.person),
+                ),
+                MyTextfield(
+                  type: TextInputType.number, 
+                  obscuretext: false, 
+                  texto: 'Ingrese el numero de paginas', 
+                  tamaniotexto: 20, 
+                  pmargin: EdgeInsetsGeometry.all(10), 
+                  ppadding: EdgeInsetsGeometry.all(20), 
+                  radio: 20, 
+                  colorfondo: Color.fromARGB(255, 176, 190, 152),
+                  controller: paginasTotales,
+                  icono: Icon(Icons.my_library_books_sharp),
+                ),
+                SizedBox(height: 20),
+                TextButton(
+                  child: Text(
+                    'Seleccione la foto de portada', 
+                    style: TextStyle(
+                      color: Color(0xFF3A5A40)
+                    ),
+                  ),
+                  onPressed: () async {
+                    final String nombreimagen = nombreLibro.text.replaceAll(' ', '').toLowerCase();
+                    direccionimagen = await libroprovider.subirimagen(nombreimagen);
+                  },
+                ),
+                SizedBox(height: 50),
+                SizedBox(
+                  width: 200,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF588157),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 6,
+                    ),
+                    child: Text(
+                      "Agregar Libro",
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                    onPressed: () async {
+                      if(nombreLibro.text.isEmpty || nombreAutor.text.isEmpty || paginasTotales.text.isEmpty)
+                      {
+                        Utils.showSnackBar(
+                          context: context,
+                          title: "Todos los campos deben estar llenos",
+                          duracion: Duration(seconds: 2),
+                          color: Colors.red
+                        );
+                      }
+                      else
+                      {
+                        if(direccionimagen == null)
+                        {
+                          Utils.showSnackBar(
+                            context: context,
+                            title: "Debe seleccionar tambien una imagen para la portada",
+                            duracion: Duration(seconds: 2),
+                            color: Colors.red
+                          );
+                        }
+                        else
+                        {
+                          final Map<String, dynamic> nuevolibro = {
+                            'autor': nombreAutor.text,
+                            'estado': 'Pendiente',
+                            'imagenPortada' : '$direccionimagen',
+                            'paginasLeidas' : 0,
+                            'paginasTotales': int.parse(paginasTotales.text),
+                            'titulo': nombreLibro.text,
+                            'userId': FirebaseAuth.instance.currentUser?.uid,
+                          };
+                          await libroprovider.guardarLibro(nuevolibro);
+                          nombreAutor.text = '';
+                          nombreLibro.text = '';
+                          paginasTotales.text = '';
+                          Utils.showSnackBar(
+                            context: context,
+                            title: "Libro agregado",
+                            duracion: Duration(seconds: 2),
+                            color: Colors.green
+                          );
+                          context.push('/home');
+                        }
+                      }
+                    },
+                  ),
+                )
+              ],
+            );
+          },
         ),
       ),
     );
   }
-  
-  ImagePicker() {}
-}
-
-mixin ImagePicker {
-}
-
-class FirebaseStorage {
-  static get instance => null;
 }

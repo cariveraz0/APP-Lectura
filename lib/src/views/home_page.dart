@@ -1,12 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lectura_app/src/models/datos_libros.dart';
 import 'package:lectura_app/src/providers/libro_provider.dart';
 import 'package:lectura_app/src/widgets/custom_drawer.dart';
 import 'package:lectura_app/src/widgets/custom_listtile.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -14,16 +14,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final libroprovider = LibroProvider();
-
   @override
   Widget build(BuildContext context) {
-    //print('Estas en HomePage()');
     return Scaffold(
       appBar: AppBar(
         title: Center(
           child: Text('Libros')
         ),
+        backgroundColor: Color.fromARGB(255, 153, 165, 153),
       ),
+      backgroundColor: Color.fromARGB(255, 214, 231, 214),
       drawer: CustomDrawer(),
       body: StreamBuilder(
         stream: libroprovider.getLibrosStream(), 
@@ -61,9 +61,11 @@ class _HomePageState extends State<HomePage> {
         }
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xFF588157),	
+        child: Icon(Icons.add, color: Colors.white),
         onPressed: (){
-          print('Usuario: ${FirebaseAuth.instance.currentUser?.uid}'); // Para obtener el userid
-        }
+          context.push('/add');
+        },
       ),
     );
   }

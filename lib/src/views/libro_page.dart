@@ -24,8 +24,8 @@ class _LibroPageState extends State<LibroPage> {
         .doc(widget.libroid);
 
     String nuevoEstado = "Pendiente";
-    
-    if (nuevaPagina > 0){
+
+    if (nuevaPagina > 0) {
       nuevoEstado = "En Progreso";
     }
 
@@ -33,21 +33,18 @@ class _LibroPageState extends State<LibroPage> {
       nuevoEstado = "Finalizado";
     }
 
-
-    await ref.update({
-      'paginasLeidas': nuevaPagina,
-      'estado': nuevoEstado,
-    });
+    await ref.update({'paginasLeidas': nuevaPagina, 'estado': nuevoEstado});
 
     FocusScope.of(context).unfocus();
     Utils.showSnackBar(
       context: context,
       title: "Progreso actualizado",
       duracion: Duration(seconds: 2),
-      color: Colors.green
+      color: Colors.green,
     );
 
     await Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
       context.replace('/home');
     });
   }
@@ -164,9 +161,10 @@ class _LibroPageState extends State<LibroPage> {
                     if (nuevaPagina > paginasTotales) {
                       Utils.showSnackBar(
                         context: context,
-                        title: "No se puede ingresar más páginas que el total del libro",
+                        title:
+                            "No se puede ingresar más páginas que el total del libro",
                         duracion: Duration(seconds: 2),
-                        color: Colors.red
+                        color: Colors.red,
                       );
                       return;
                     }

@@ -8,7 +8,6 @@ import 'package:lectura_app/src/widgets/custom_drawer.dart';
 import 'package:lectura_app/src/widgets/custom_listtile.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -22,7 +21,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: Center(
@@ -32,8 +30,8 @@ class _HomePageState extends State<HomePage> {
       ),
       drawer: CustomDrawer(),
       body: StreamBuilder(
-        stream: libroprovider.getLibrosStream(), 
-        builder: (context, snapshot){
+        stream: libroprovider.getLibrosStream(),
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
@@ -48,37 +46,97 @@ class _HomePageState extends State<HomePage> {
             itemCount: libros.length,
             itemBuilder: (BuildContext context, int index) {
               final libro = libros[index];
-              return CustomListTile(
-                fotoPortada: libro.imagenPortada.isNotEmpty
-                  ? Image.network(libro.imagenPortada, width: 50, height: 50, fit: BoxFit.cover)
-                  : const Icon(Icons.book),
-                libroTitulo: libro.titulo,
-                autor: libro.autor,
-                estado: libro.estado,
-                paginasLeidas: libro.paginasLeidas,
-                paginasTotales: libro.paginasTotales,
-                contexto: context,
-                direccion: 'libro',
-                id: libro.id,
-              );    
+
+              return Dismissible(
+                key: Key(libro.id),
+                direction: DismissDirection.endToStart,
+
+                background: Container(
+                  color: Colors.red,
+                  padding: EdgeInsets.only(left: 20),
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, color: Colors.white, size: 32),
+                      SizedBox(width: 10),
+                      Text(
+                        "Eliminar",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
+                confirmDismiss: (direction) async {
+                  return await showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text("¿Desea Eliminar el Libro?"),
+                      actions: [
+                        TextButton(
+                          child: Text(
+                            "Cancelar",
+                            style: TextStyle(color: Color(0xFF588157)),
+                          ),
+                          onPressed: () => Navigator.of(context).pop(false),
+                        ),
+                        TextButton(
+                          child: Text(
+                            "Eliminar",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          onPressed: () => Navigator.of(context).pop(true),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+
+                onDismissed: (direction) async {
+                  await libroprovider.eliminarLibro(libro.id);
+
+                  Utils.showSnackBar(
+                    context: context,
+                    title: "Libro eliminado",
+                    duracion: Duration(seconds: 2),
+                    color: Colors.red,
+                  );
+                },
+                child: CustomListTile(
+                  fotoPortada: libro.imagenPortada.isNotEmpty
+                      ? Image.network(
+                          libro.imagenPortada,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        )
+                      : const Icon(Icons.book),
+                  libroTitulo: libro.titulo,
+                  autor: libro.autor,
+                  estado: libro.estado,
+                  paginasLeidas: libro.paginasLeidas,
+                  paginasTotales: libro.paginasTotales,
+                  contexto: context,
+                  direccion: 'libro',
+                  id: libro.id,
+                ),
+              );
             },
           );
-        }
+        },
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Color(0xFF588157),	
+        backgroundColor: Color(0xFF588157),
         child: Icon(Icons.add, color: Colors.white),
-        onPressed: (){
-          libroprovider.getLibrosStream().first.then((libros){
-            if (libros.length >= 12){
+        onPressed: () {
+          libroprovider.getLibrosStream().first.then((libros) {
+            if (libros.length >= 12) {
               Utils.showSnackBar(
                 context: context,
                 title: "Solo se puede agregar un maximo de 12 libros",
                 duracion: Duration(seconds: 3),
-                color: Colors.red
+                color: Colors.red,
               );
-            }
-            else{
+            } else {
               context.push('/add');
             }
           });
@@ -86,11 +144,15 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: StreamBuilder<List<Libro>>(
         stream: libroprovider.getLibrosStream(),
-        builder: (context, snapshot){
+        builder: (context, snapshot) {
           final libros = snapshot.data ?? [];
           final int librosTotales = libros.length;
-          final int librosLeidos = libros.where((libro) => libro.estado == 'Finalizado').length;
-          final double progreso = librosTotales == 0 ? 0 : librosLeidos / librosTotales;
+          final int librosLeidos = libros
+              .where((libro) => libro.estado == 'Finalizado')
+              .length;
+          final double progreso = librosTotales == 0
+              ? 0
+              : librosLeidos / librosTotales;
 
           return Container(
             color: Color(0xFFA3B18A),
@@ -113,11 +175,11 @@ class _HomePageState extends State<HomePage> {
                         fontSize: 12,
                         fontFamily: "StackSansHeadline",
                         fontWeight: FontWeight.bold,
-                        color: Colors.black
+                        color: Colors.black,
                       ),
                     ),
-                  )
-                )
+                  ),
+                ),
               ],
             ),
           );

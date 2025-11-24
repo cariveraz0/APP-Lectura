@@ -24,6 +24,13 @@ class LibroProvider {
     await collectionRefTodos.add(nuevolibro);
   }
 
+  Future<void> eliminarLibro(String id) async {
+  await FirebaseFirestore.instance
+      .collection('libros')
+      .doc(id)
+      .delete();
+}
+
    Future<String?> subirimagen(String nombreimagen) async {
     try {
       final picker = ImagePicker();
